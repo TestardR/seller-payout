@@ -1,0 +1,16 @@
+version: '3.4'
+services:
+    sellerpayout:
+        build:
+            # the right Dockerfile path is injected via environment variable
+            dockerfile: ${D_PATH:-Dockerfile}
+            context: .
+        ports:
+            - 3000:3000
+        environment:
+            # App config
+            - PORT=3000
+            - ENV=debug
+        volumes:
+            # needed in Dockerfile.dev for file watch mode
+            - ./:/go/src
