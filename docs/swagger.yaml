@@ -1,0 +1,166 @@
+definitions:
+  handler.CreateItemsRequest:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/handler.Item'
+        type: array
+    type: object
+  handler.Error:
+    properties:
+      message:
+        type: string
+    type: object
+  handler.HealthResp:
+    properties:
+      status:
+        type: boolean
+    type: object
+  handler.Item:
+    properties:
+      amount:
+        minimum: 0
+        type: integer
+      currency:
+        type: string
+      name:
+        type: string
+      seller_id:
+        type: string
+    required:
+    - amount
+    - name
+    - seller_id
+    type: object
+  handler.ResponseError:
+    properties:
+      errors:
+        items:
+          $ref: '#/definitions/handler.Error'
+        type: array
+    type: object
+  handler.ResponseSuccess:
+    properties:
+      data: {}
+    type: object
+  handler.Seller:
+    properties:
+      currency:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: romain.rtestard@gmail.com
+    name: Romain Testard
+  description: Server allowing interaction with Seller Payout Domain
+  title: SellerPayout Rest Server
+  version: "1.0"
+paths:
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Healthcheck endpoint, to ensure that the service is running.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.HealthResp'
+      summary: Health check
+      tags:
+      - Health
+  /items:
+    post:
+      consumes:
+      - application/json
+      description: Create items.
+      parameters:
+      - description: Find the fields needed to create items using the 'handler' tab
+          below.
+        in: body
+        name: create
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateItemsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ResponseError'
+      summary: Endpoint to send sold items.
+      tags:
+      - Items
+  /payouts/:seller_id:
+    get:
+      consumes:
+      - application/json
+      description: Create Seller.
+      parameters:
+      - description: Seller ID query parameter
+        in: query
+        name: seller_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ResponseError'
+      summary: Endpoint to retrieve payouts for a specific seller.
+      tags:
+      - Seller
+  /seller:
+    post:
+      consumes:
+      - application/json
+      description: Create Seller.
+      parameters:
+      - description: Find the fields needed to create a seller using the 'handler'
+          tab below.
+        in: body
+        name: create
+        required: true
+        schema:
+          $ref: '#/definitions/handler.Seller'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ResponseError'
+      summary: Endpoint to create seller.
+      tags:
+      - Seller
+swagger: "2.0"
