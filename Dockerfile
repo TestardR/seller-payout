@@ -12,7 +12,7 @@ FROM deps as build
 COPY cmd cmd
 COPY pkg pkg
 
-RUN go build -o /go/bin/app cmd/fizzbuzz/fizzbuzz.go
+RUN go build -o /go/bin/app cmd/sellerpayout/sellerpayout.go
 
 FROM gcr.io/distroless/base-debian10
 

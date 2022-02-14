@@ -1,0 +1,81 @@
+run:
+    # timeout for analysis, e.g. 30s, 5m, default is 1m
+    timeout: 5m
+
+    # include test files or not, default is true
+    tests: false
+
+linters:
+    enable:
+        - asciicheck
+        - bodyclose
+        - cyclop
+        - dogsled
+        - durationcheck
+        - errname
+        - errorlint
+        - exhaustive
+        - exportloopref
+        - forbidigo
+        - forcetypeassert
+        - funlen
+        - gci
+        - gocognit
+        - goconst
+        - gocritic
+        - gocyclo
+        - godot
+        - goerr113
+        - goprintffuncname
+        - gosec
+        - ifshort
+        - importas
+        - makezero
+        - misspell
+        - nakedret
+        - nestif
+        - nilerr
+        - nlreturn
+        - noctx
+        - nolintlint
+        - paralleltest
+        - prealloc
+        - predeclared
+        - revive
+        - rowserrcheck
+        - exportloopref
+        - sqlclosecheck
+        - stylecheck
+        - thelper
+        - tparallel
+        - unconvert
+        - unparam
+        - wastedassign
+        - whitespace
+        - wsl
+        - tagliatelle
+
+linters-settings:
+    wsl:
+        enforce-err-cuddling: true
+    gocognit:
+        # minimal code complexity to report, 30 by default (but we recommend 10-20)
+        min-complexity: 20
+    tagliatelle:
+        # check the struck tag name case
+        case:
+            # use the struct field name to check the name of the struct tag
+            use-field-name: true
+            rules:
+                # any struct tag type can be used.
+                # support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
+                json: snake
+    cyclop:
+        max-complexity: 15
+    funlen:
+        lines: 80
+    errcheck:
+        exclude: .golangci_errcheck_exclude.txt
+issues:
+    # Disable default exclusion (otherwise most of golint issues are not catched)
+    exclude-use-default: false

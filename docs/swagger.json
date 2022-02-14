@@ -1,0 +1,251 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Server allowing interaction with Seller Payout Domain",
+        "title": "SellerPayout Rest Server",
+        "contact": {
+            "name": "Romain Testard",
+            "email": "romain.rtestard@gmail.com"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:3000",
+    "paths": {
+        "/health": {
+            "get": {
+                "description": "Healthcheck endpoint, to ensure that the service is running.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.HealthResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/items": {
+            "post": {
+                "description": "Create items.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Items"
+                ],
+                "summary": "Endpoint to send sold items.",
+                "parameters": [
+                    {
+                        "description": "Find the fields needed to create items using the 'handler' tab below.",
+                        "name": "create",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.CreateItemsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/payouts/:seller_id": {
+            "get": {
+                "description": "Create Seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller"
+                ],
+                "summary": "Endpoint to retrieve payouts for a specific seller.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Seller ID query parameter",
+                        "name": "seller_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/seller": {
+            "post": {
+                "description": "Create Seller.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller"
+                ],
+                "summary": "Endpoint to create seller.",
+                "parameters": [
+                    {
+                        "description": "Find the fields needed to create a seller using the 'handler' tab below.",
+                        "name": "create",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.Seller"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handler.CreateItemsRequest": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handler.Item"
+                    }
+                }
+            }
+        },
+        "handler.Error": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.HealthResp": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "handler.Item": {
+            "type": "object",
+            "required": [
+                "amount",
+                "name",
+                "seller_id"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "seller_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.ResponseError": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handler.Error"
+                    }
+                }
+            }
+        },
+        "handler.ResponseSuccess": {
+            "type": "object",
+            "properties": {
+                "data": {}
+            }
+        },
+        "handler.Seller": {
+            "type": "object",
+            "properties": {
+                "currency": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

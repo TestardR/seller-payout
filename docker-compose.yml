@@ -11,6 +11,22 @@ services:
             # App config
             - PORT=3000
             - ENV=debug
+            - PAYOUT_INTERVAL=4
+            - CURRENCY_INTERVAL=12
+            # Postgres config
+            - PG_HOST=postgres
+            - PG_USER=u
+            - PG_NAME=postgres
+            - PG_PASSWORD=p
         volumes:
             # needed in Dockerfile.dev for file watch mode
             - ./:/go/src
+
+    postgres:
+        image: postgres:12.3
+        restart: always
+        ports:
+            - 5432:5432
+        environment:
+            - POSTGRES_USER=u
+            - POSTGRES_PASSWORD=p
