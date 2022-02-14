@@ -181,7 +181,7 @@ func (h Handler) persistPayouts(payoutC <-chan model.Payout) error {
 
 		defer func() {
 			if r := recover(); r != nil {
-				tx.Rollback()
+				err = tx.Rollback()
 
 				err = errRecoverFromPanic
 			}

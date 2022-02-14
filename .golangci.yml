@@ -45,7 +45,6 @@ linters:
         - rowserrcheck
         - exportloopref
         - sqlclosecheck
-        - stylecheck
         - thelper
         - tparallel
         - unconvert
@@ -53,7 +52,6 @@ linters:
         - wastedassign
         - whitespace
         - wsl
-        - tagliatelle
 
 linters-settings:
     wsl:
@@ -61,15 +59,6 @@ linters-settings:
     gocognit:
         # minimal code complexity to report, 30 by default (but we recommend 10-20)
         min-complexity: 20
-    tagliatelle:
-        # check the struck tag name case
-        case:
-            # use the struct field name to check the name of the struct tag
-            use-field-name: true
-            rules:
-                # any struct tag type can be used.
-                # support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
-                json: snake
     cyclop:
         max-complexity: 15
     funlen:

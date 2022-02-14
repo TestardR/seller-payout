@@ -17,7 +17,7 @@ type Handler struct {
 	EX  currency.Exchanger
 }
 
-// HealtResp holds the satus response from Health Check
+// HealthResp holds the satus response from Health Check.
 type HealthResp struct {
 	Status bool `json:"status"`
 }
@@ -35,6 +35,7 @@ func (h Handler) Health(c *gin.Context) {
 		err = fmt.Errorf("failed to connect to database: %w", err)
 		h.Log.Error(err)
 		c.JSON(http.StatusInternalServerError, HealthResp{Status: false})
+
 		return
 	}
 

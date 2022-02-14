@@ -1,3 +1,2 @@
 (*github.com/gin-gonic/gin.Context).Error
-(gitlab.com/sennder/shipper-sales/programmatic/gopkg/db/postgres.DB).Rollback
-
+(github.com/TestardR/seller-payout/pkg/db.DB).Rollback

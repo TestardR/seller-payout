@@ -22,6 +22,8 @@ var (
 	ErrRecordNotFound = gorm.ErrRecordNotFound
 	// ErrAbsolutePath error raised when a migrationDir is absolute.
 	ErrAbsolutePath = errors.New("path should not be absolute")
+	// ErrConnPool is failed to cast ConnPool to pingable interface.
+	ErrConnPool = errors.New("failed to cast ConnPool to pingable interface")
 )
 
 //go:generate mockgen -source=db.go -destination=$MOCK_FOLDER/db.go -package=mock
@@ -79,12 +81,13 @@ func (d database) Health() error {
 		return pinger.Ping()
 	}
 
-	return errors.New("failed to cast ConnPool to pingable interface")
+	return ErrConnPool
 }
 
 // Begin begins a sql transaction.
 func (d database) Begin() (DB, error) {
 	tx := d.driver.Begin()
+
 	return &database{driver: tx}, tx.Error
 }
 

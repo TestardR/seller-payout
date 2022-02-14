@@ -50,8 +50,8 @@ reset-db: ## Drop all database and apply all migrations
 mock:
 	@MOCK_FOLDER=${MOCK_FOLDER} go generate ./...
 
-lint:
-	@staticcheck ./...
+lint: ## Lint
+	@golangci-lint run --tests=false
 
 test: mock
 	@mkdir -p ${IGNORED_FOLDER}
@@ -89,5 +89,5 @@ swag:
 ##
 tools:
 	@go install github.com/golang/mock/mockgen@latest
-	@go install honnef.co/go/tools/cmd/staticcheck@latest
+	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	@GO111MODULE=off go get -tags 'postgres' -u github.com/golang-migrate/migrate/cmd/migrate
