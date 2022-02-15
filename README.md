@@ -1,4 +1,4 @@
-./handler (where the business logic happens) reaches coverage: 93.3% of statements :smile:
+./handler (where the business logic happens) reaches a test coverage of 93.3% of statements :innocent:
 
 ## Table of Contents
 
@@ -84,8 +84,7 @@ Ideally, I would want to follow the [Test Pyramid stragegy](https://martinfowler
 On unit tests: 
 - `sellerpayout.go` is not tested. It is the application initialization of injected dependencies.
 - Critical contracts are made to interfaces and not to concrete implementations. It allows us to mock concrete implementations from interfaces using [gomock library](https://github.com/golang/mock).
-- Even though the coverage is high, the overall the quality of tests is **shallow**. If I had more time, I would have invested time to pass more real data and not focus business flow.
-This caveat has been mitigated through e2e testing.
+- Even though the coverage is high, the overall the quality of tests is **shallow**. If I had more time, I would have invested time to pass more real data and not only focus the business flow. This caveat has been mitigated through e2e testing.
 
 On integration tests:
 - There are none, I would have implemented integration tests in the `./pkg` folder if I had more more time.
@@ -244,6 +243,6 @@ We use [Golangci-lint](https://golangci-lint.run/) as linter.
 
 ## Documentation
 
-We use swaggo to generate a swagger documentation. To install swaggo, run `make tools-docs`, and to generate the documentation run `make docs`.
+We use swaggo to generate a swagger documentation. To install swaggo, run `make tools`, and to generate the documentation run `make docs`.
 
 The documentation will then be available under the endpoint [/swagger/index.html](http://localhost:3000/swagger/index.html).
