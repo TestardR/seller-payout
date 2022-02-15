@@ -1,4 +1,4 @@
-./handler (where the business logic happens) reaches a test coverage of 93.3% of statements :innocent:
+./handler (where the business logic happens) reaches a test coverage of 95.4% of statements :innocent:
 
 ## Table of Contents
 

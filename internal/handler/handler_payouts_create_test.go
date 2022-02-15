@@ -23,20 +23,21 @@ func TestHandler_CreatePayouts(t *testing.T) {
 	t.Cleanup(func() { mc.Finish() })
 
 	tests := map[string]handleCaseCreatePayouts{
-		"fail-db-find-unpaid-items":     payoutsCreateCaseFailDBFindUnpaidOutItems(mc),
-		"fail-db-find-currencies":       payoutsCreateCaseFailDBFindCurrencies(mc),
-		"fail-db-begin-tx":              payoutsCreateCaseFailDBBeginTX(mc),
-		"fail-db-insert-tx":             payoutsCreateCaseFailDBInsertTX(mc),
-		"fail-db-update-tx":             payoutsCreateCaseFailDBUpdateTX(mc),
-		"fail-db-commit-tx":             payoutsCreateCaseFailDBCommitTX(mc),
-		"split-payouts-above-max-price": payoutsCreateCaseSplitPayoutsAboveMaxPrice(mc),
-		"success":                       payoutsCreateCaseOK(mc),
+		"fail-db-find-unpaid-items":                payoutsCreateCaseFailDBFindUnpaidOutItems(mc),
+		"fail-db-find-currencies":                  payoutsCreateCaseFailDBFindCurrencies(mc),
+		"fail-db-begin-tx":                         payoutsCreateCaseFailDBBeginTX(mc),
+		"fail-db-insert-tx":                        payoutsCreateCaseFailDBInsertTX(mc),
+		"fail-db-update-tx":                        payoutsCreateCaseFailDBUpdateTX(mc),
+		"fail-db-commit-tx":                        payoutsCreateCaseFailDBCommitTX(mc),
+		"split-payouts-above-max-price":            payoutsCreateCaseSplitPayoutsAboveMaxPrice(mc),
+		"no-payout-created-if-seller-has-no-items": payoutsCreateCaseNoPayoutCreatedWithoutItems(mc),
+		"success": payoutsCreateCaseOK(mc),
 	}
 
 	for tn, tc := range tests {
 		tn, tc := tn, tc
 		t.Run(tn, func(t *testing.T) {
-			t.Parallel()
+			/* t.Parallel() */
 
 			err := tc.h.CreatePayouts()
 
@@ -54,7 +55,7 @@ func payoutsCreateCaseFailDBCommitTX(mc *gomock.Controller) handleCaseCreatePayo
 	merr := errors.New("mock")
 
 	ml.EXPECT().Info(gomock.Any())
-	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(validSellersWithUnpaidOutItems(), nil)
+	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(sellersWithUnpaidOutItems(), nil)
 	mdb.EXPECT().FindAll(gomock.Any())
 	mdb.EXPECT().Begin().Return(mdb, nil)
 	mdb.EXPECT().Insert(gomock.Any())
@@ -79,7 +80,7 @@ func payoutsCreateCaseFailDBUpdateTX(mc *gomock.Controller) handleCaseCreatePayo
 	merr := errors.New("mock")
 
 	ml.EXPECT().Info(gomock.Any())
-	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(validSellersWithUnpaidOutItems(), nil)
+	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(sellersWithUnpaidOutItems(), nil)
 	mdb.EXPECT().FindAll(gomock.Any())
 	mdb.EXPECT().Begin().Return(mdb, nil)
 	mdb.EXPECT().Insert(gomock.Any())
@@ -103,7 +104,7 @@ func payoutsCreateCaseFailDBInsertTX(mc *gomock.Controller) handleCaseCreatePayo
 	merr := errors.New("mock")
 
 	ml.EXPECT().Info(gomock.Any())
-	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(validSellersWithUnpaidOutItems(), nil)
+	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(sellersWithUnpaidOutItems(), nil)
 	mdb.EXPECT().FindAll(gomock.Any())
 	mdb.EXPECT().Begin().Return(mdb, nil)
 	mdb.EXPECT().Insert(gomock.Any()).Return(merr)
@@ -126,7 +127,7 @@ func payoutsCreateCaseFailDBBeginTX(mc *gomock.Controller) handleCaseCreatePayou
 	merr := errors.New("mock")
 
 	ml.EXPECT().Info(gomock.Any())
-	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(validSellersWithUnpaidOutItems(), nil)
+	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(sellersWithUnpaidOutItems(), nil)
 	mdb.EXPECT().FindAll(gomock.Any())
 	mdb.EXPECT().Begin().Return(nil, merr)
 	ml.EXPECT().Error(gomock.Any())
@@ -148,7 +149,7 @@ func payoutsCreateCaseFailDBFindCurrencies(mc *gomock.Controller) handleCaseCrea
 	merr := errors.New("mock")
 
 	ml.EXPECT().Info(gomock.Any())
-	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(validSellersWithUnpaidOutItems(), nil)
+	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(sellersWithUnpaidOutItems(), nil)
 	mdb.EXPECT().FindAll(gomock.Any()).Return(merr)
 	ml.EXPECT().Error(gomock.Any())
 
@@ -185,7 +186,7 @@ func payoutsCreateCaseSplitPayoutsAboveMaxPrice(mc *gomock.Controller) handleCas
 	mdb := mock.NewMockDB(mc)
 
 	ml.EXPECT().Info(gomock.Any())
-	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(validSellersWithUnpaidOutItemsAboveMaxPrice(), nil)
+	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(sellersWithUnpaidOutItemsAboveMaxPrice(), nil)
 	mdb.EXPECT().FindAll(gomock.Any())
 	mdb.EXPECT().Begin().Return(mdb, nil)
 	mdb.EXPECT().Insert(gomock.Any())
@@ -208,12 +209,30 @@ func payoutsCreateCaseSplitPayoutsAboveMaxPrice(mc *gomock.Controller) handleCas
 	}
 }
 
+func payoutsCreateCaseNoPayoutCreatedWithoutItems(mc *gomock.Controller) handleCaseCreatePayouts {
+	ml := mock.NewMockLogger(mc)
+	mdb := mock.NewMockDB(mc)
+
+	ml.EXPECT().Info(gomock.Any())
+	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(sellersWithoutUnpaidOutitems(), nil)
+	mdb.EXPECT().FindAll(gomock.Any())
+	ml.EXPECT().Info(gomock.Any())
+
+	return handleCaseCreatePayouts{
+		h: Handler{
+			Log: ml,
+			DB:  mdb,
+		},
+		err: nil,
+	}
+}
+
 func payoutsCreateCaseOK(mc *gomock.Controller) handleCaseCreatePayouts {
 	ml := mock.NewMockLogger(mc)
 	mdb := mock.NewMockDB(mc)
 
 	ml.EXPECT().Info(gomock.Any())
-	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(validSellersWithUnpaidOutItems(), nil)
+	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return(sellersWithUnpaidOutItems(), nil)
 	mdb.EXPECT().FindAll(gomock.Any())
 	mdb.EXPECT().Begin().Return(mdb, nil)
 	mdb.EXPECT().Insert(gomock.Any())
@@ -249,22 +268,16 @@ func Test_convertToSellerCurrency(t *testing.T) {
 }
 
 func validItems(paidout bool) []model.Item {
-	mID := uuid.FromStringOrNil("test-id")
-	mItem := model.Item{
-		ReferenceName: "test-ref-name",
-		SellerID:      mID,
-		Seller:        model.Seller{ID: mID, CurrencyCode: "USD"},
-		PaidOut:       paidout,
-		PriceAmount:   decimal.NewFromInt(1000000),
-		CurrencyCode:  "USD",
-	}
-
-	return []model.Item{mItem}
+	return []model.Item{validItem(paidout)}
 }
 
 func validItemsAboveMaxPrice(paidout bool) []model.Item {
+	return []model.Item{validItem(paidout), validItem(paidout)}
+}
+
+func validItem(paidout bool) model.Item {
 	mID := uuid.FromStringOrNil("test-id")
-	mItem := model.Item{
+	return model.Item{
 		ReferenceName: "test-ref-name",
 		SellerID:      mID,
 		Seller:        model.Seller{ID: mID, CurrencyCode: "USD"},
@@ -272,11 +285,9 @@ func validItemsAboveMaxPrice(paidout bool) []model.Item {
 		PriceAmount:   decimal.NewFromInt(1000000),
 		CurrencyCode:  "USD",
 	}
-
-	return []model.Item{mItem, mItem}
 }
 
-func validSellersWithUnpaidOutItems() []model.Seller {
+func sellersWithUnpaidOutItems() []model.Seller {
 	mSeller := model.Seller{
 		CurrencyCode: "USD",
 		Items:        validItems(false),
@@ -285,10 +296,19 @@ func validSellersWithUnpaidOutItems() []model.Seller {
 	return []model.Seller{mSeller}
 }
 
-func validSellersWithUnpaidOutItemsAboveMaxPrice() []model.Seller {
+func sellersWithUnpaidOutItemsAboveMaxPrice() []model.Seller {
 	return []model.Seller{
 		{
 			CurrencyCode: "USD",
 			Items:        validItemsAboveMaxPrice(false)},
 	}
+}
+
+func sellersWithoutUnpaidOutitems() []model.Seller {
+	mSeller := model.Seller{
+		CurrencyCode: "USD",
+		Items:        []model.Item{},
+	}
+
+	return []model.Seller{mSeller}
 }

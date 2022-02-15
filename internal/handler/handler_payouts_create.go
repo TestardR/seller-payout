@@ -56,14 +56,12 @@ func (h Handler) CreatePayouts() error {
 }
 
 // setupPipeline organizes stages for staged processing.
-func (h Handler) setupPipeline(
-	seller model.Seller,
-	currenciesMap map[string]model.Currency) error {
-	// if an error occurs the done channel will terminate stages 1. and 2.
+func (h Handler) setupPipeline(seller model.Seller, currenciesMap map[string]model.Currency) error {
+	// if an error occurs the done channel will gracefully terminate stages 1. and 2.
 	done := make(chan struct{})
 	defer close(done)
 
-	// Stage 1. creates a batch of items
+	// Stage 1. creates batch of items
 	itemsBatchC := generateItemsBatch(done, seller, currenciesMap)
 	// Stage 2. creates payouts
 	payoutC := generatePayouts(done, seller, currenciesMap, itemsBatchC)
