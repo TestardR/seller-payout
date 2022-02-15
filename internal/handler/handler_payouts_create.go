@@ -6,7 +6,6 @@ import (
 
 	"github.com/TestardR/seller-payout/internal/model"
 	"github.com/TestardR/seller-payout/pkg/currency"
-	"github.com/gofrs/uuid"
 	"github.com/shopspring/decimal"
 )
 
@@ -226,14 +225,4 @@ func convertToSellerCurrency(
 	}
 
 	return price
-}
-
-func itemsMapFromSeller(items []model.Item) map[uuid.UUID][]model.Item {
-	output := make(map[uuid.UUID][]model.Item)
-
-	for _, item := range items {
-		output[item.SellerID] = append(output[item.SellerID], item)
-	}
-
-	return output
 }
