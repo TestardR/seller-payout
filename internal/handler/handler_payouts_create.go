@@ -18,20 +18,13 @@ const totalPriceLimit = 1_000_000
 func (h Handler) CreatePayouts() error {
 	h.Log.Info("payouts creation started")
 
-	items, err := h.DB.FindUnpaidOutItems()
+	sellers, err := h.DB.FindSellersWhereItems(map[string]interface{}{"paid_out": false})
 	if err != nil {
 		err = fmt.Errorf("%w: %s", errDB, err)
 		h.Log.Error(err)
 
 		return err
 	}
-
-	sellersMap := make(map[uuid.UUID]model.Seller)
-	for _, item := range items {
-		sellersMap[item.SellerID] = item.Seller
-	}
-
-	itemsMap := itemsMapFromSeller(items)
 
 	var currencies []model.Currency
 	if err := h.DB.FindAll(&currencies); err != nil {
@@ -46,9 +39,12 @@ func (h Handler) CreatePayouts() error {
 		currenciesMap[c.Code] = c
 	}
 
-	for sellerID, seller := range sellersMap {
+	for _, seller := range sellers {
+		if len(seller.Items) == 0 {
+			continue
+		}
 		// Concurrent Pipeline organizing payouts creation stages
-		if err := h.setupPipeline(sellerID, seller, itemsMap, currenciesMap); err != nil {
+		if err := h.setupPipeline(seller, currenciesMap); err != nil {
 			h.Log.Error(err)
 
 			return err
@@ -62,16 +58,14 @@ func (h Handler) CreatePayouts() error {
 
 // setupPipeline organizes stages for staged processing.
 func (h Handler) setupPipeline(
-	sellerID uuid.UUID,
 	seller model.Seller,
-	itemsMap map[uuid.UUID][]model.Item,
 	currenciesMap map[string]model.Currency) error {
 	// if an error occurs the done channel will terminate stages 1. and 2.
 	done := make(chan struct{})
 	defer close(done)
 
 	// Stage 1. creates a batch of items
-	itemsBatchC := generateItemsBatch(done, seller, itemsMap[sellerID], currenciesMap)
+	itemsBatchC := generateItemsBatch(done, seller, currenciesMap)
 	// Stage 2. creates payouts
 	payoutC := generatePayouts(done, seller, currenciesMap, itemsBatchC)
 	// Stage 3. persists payouts
@@ -92,7 +86,6 @@ type itemsBatch struct {
 func generateItemsBatch(
 	done <-chan struct{},
 	seller model.Seller,
-	items []model.Item,
 	currencies map[string]model.Currency) <-chan itemsBatch {
 	itemsBatchC := make(chan itemsBatch)
 
@@ -103,7 +96,7 @@ func generateItemsBatch(
 
 		totalPrice := decimal.NewFromInt(0)
 
-		for _, item := range items {
+		for _, item := range seller.Items {
 			price := convertToSellerCurrency(
 				seller.CurrencyCode,
 				item.CurrencyCode,

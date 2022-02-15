@@ -32,6 +32,8 @@ type Seller struct {
 	UpdatedAt time.Time `json:"-"`
 
 	CurrencyCode string `json:"currency_code"`
+
+	Items []Item
 }
 
 // Item is a sold product.

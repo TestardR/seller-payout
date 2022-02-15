@@ -53,6 +53,7 @@ type DB interface {
 	FindPayoutsBySellerID(string) ([]model.Payout, error)
 	FindUnpaidOutItemsBySellerID(string) ([]model.Item, error)
 	FindUnpaidOutItems() ([]model.Item, error)
+	FindSellersWhereItems(conds map[string]interface{}) ([]model.Seller, error)
 
 	RunMigrations(path string) error
 }

@@ -121,6 +121,21 @@ func (mr *MockDBMockRecorder) FindPayoutsBySellerID(arg0 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindPayoutsBySellerID", reflect.TypeOf((*MockDB)(nil).FindPayoutsBySellerID), arg0)
 }
 
+// FindSellersWhereItems mocks base method.
+func (m *MockDB) FindSellersWhereItems(conds map[string]interface{}) ([]model.Seller, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindSellersWhereItems", conds)
+	ret0, _ := ret[0].([]model.Seller)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindSellersWhereItems indicates an expected call of FindSellersWhereItems.
+func (mr *MockDBMockRecorder) FindSellersWhereItems(conds interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindSellersWhereItems", reflect.TypeOf((*MockDB)(nil).FindSellersWhereItems), conds)
+}
+
 // FindUnpaidOutItems mocks base method.
 func (m *MockDB) FindUnpaidOutItems() ([]model.Item, error) {
 	m.ctrl.T.Helper()
