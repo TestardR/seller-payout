@@ -18,7 +18,7 @@ func TestHandler_Health(t *testing.T) {
 	defer ctrl.Finish()
 	mLog := mock.NewMockLogger(ctrl)
 	mDB := mock.NewMockDB(ctrl)
-	h := Handler{
+	h := handler{
 		Log: mLog,
 		DB:  mDB,
 	}

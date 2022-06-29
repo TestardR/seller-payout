@@ -15,7 +15,7 @@ import (
 )
 
 type handlerCaseCreateItems struct {
-	h      Handler
+	h      handler
 	in     string
 	status int
 }
@@ -57,7 +57,7 @@ func itemsCreateCaseFailEmptyPayload(mc *gomock.Controller) handlerCaseCreateIte
 	ml.EXPECT().Error(gomock.Any())
 
 	return handlerCaseCreateItems{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mDB,
 		},
@@ -72,7 +72,7 @@ func itemsCreateCaseFailJSON(mc *gomock.Controller) handlerCaseCreateItems {
 	ml.EXPECT().Error(gomock.Any())
 
 	return handlerCaseCreateItems{
-		h: Handler{
+		h: handler{
 			Log: ml,
 		},
 		in: `[ {
@@ -90,7 +90,7 @@ func itemsCreateCaseFailValidation(mc *gomock.Controller) handlerCaseCreateItems
 	ml.EXPECT().Error(gomock.Any())
 
 	return handlerCaseCreateItems{
-		h: Handler{
+		h: handler{
 			Log: ml,
 		},
 		in: `[ {
@@ -110,7 +110,7 @@ func itemsCreateCaseFailDBFindSellerByID(mc *gomock.Controller) handlerCaseCreat
 	ml.EXPECT().Error(gomock.Any())
 
 	return handlerCaseCreateItems{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -130,7 +130,7 @@ func itemsCreateCaseFailDBInsertItems(mc *gomock.Controller) handlerCaseCreateIt
 	ml.EXPECT().Error(gomock.Any())
 
 	return handlerCaseCreateItems{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -151,7 +151,7 @@ func itemsCreateCaseAutoCreateSeller(mc *gomock.Controller) handlerCaseCreateIte
 	ml.EXPECT().Info(gomock.Any())
 
 	return handlerCaseCreateItems{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -171,7 +171,7 @@ func itemsCreateCaseOK(mc *gomock.Controller) handlerCaseCreateItems {
 	ml.EXPECT().Info(gomock.Any())
 
 	return handlerCaseCreateItems{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},

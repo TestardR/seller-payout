@@ -37,7 +37,7 @@ type item struct {
 // @Failure 400 {object} ResponseError
 // @Failure 500 {object} ResponseError
 // @Router /payouts/:seller_id [get].
-func (h Handler) ReadPayouts(c *gin.Context) {
+func (h handler) ReadPayouts(c *gin.Context) {
 	outErr := func(status int, err error) {
 		h.Log.Error(err)
 

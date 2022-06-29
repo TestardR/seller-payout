@@ -20,7 +20,7 @@ type HealthResp struct {
 // @Produce  json
 // @Success 200 {object} HealthResp
 // @Router /health [get].
-func (h Handler) Health(c *gin.Context) {
+func (h handler) Health(c *gin.Context) {
 	if err := h.DB.Health(); err != nil {
 		err = fmt.Errorf("failed to connect to database: %w", err)
 		h.Log.Error(err)

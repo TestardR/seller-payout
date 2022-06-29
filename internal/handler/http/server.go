@@ -33,7 +33,7 @@ const (
 
 // NewServer instantiates an HTTP server.
 func NewServer(env string, log logger.Logger, db db.DB) *gin.Engine {
-	h := Handler{
+	h := handler{
 		Log: log,
 		DB:  db,
 	}

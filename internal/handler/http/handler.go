@@ -6,8 +6,7 @@ import (
 	"github.com/TestardR/seller-payout/pkg/logger"
 )
 
-// Handler is the main structure to inject dependencies.
-type Handler struct {
+type handler struct {
 	Log logger.Logger
 	DB  db.DB
 	EX  currency.Exchanger

@@ -23,7 +23,7 @@ import (
 )
 
 type handlerCaseReadPayouts struct {
-	h        Handler
+	h        handler
 	sellerID string
 	status   int
 }
@@ -70,7 +70,7 @@ func payoutsReadCaseOK(mc *gomock.Controller) handlerCaseReadPayouts {
 	ml.EXPECT().Info(gomock.Any())
 
 	return handlerCaseReadPayouts{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -88,7 +88,7 @@ func payoutsReadCaseFailDBFindPayouts(mc *gomock.Controller) handlerCaseReadPayo
 	ml.EXPECT().Error(gomock.Any())
 
 	return handlerCaseReadPayouts{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -105,7 +105,7 @@ func payoutsReadCaseFailDBSellerNotFound(mc *gomock.Controller) handlerCaseReadP
 	ml.EXPECT().Error(gomock.Any())
 
 	return handlerCaseReadPayouts{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -122,7 +122,7 @@ func payoutsReadCaseFailDBFindSellerByID(mc *gomock.Controller) handlerCaseReadP
 	ml.EXPECT().Error(gomock.Any())
 
 	return handlerCaseReadPayouts{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},

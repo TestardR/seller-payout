@@ -44,7 +44,7 @@ type Item struct {
 // @Failure 400 {object} ResponseError
 // @Failure 500 {object} ResponseError
 // @Router /items [post].
-func (h Handler) CreateItems(c *gin.Context) {
+func (h handler) CreateItems(c *gin.Context) {
 	outErr := func(status int, err error) {
 		h.Log.Error(err)
 
@@ -91,7 +91,7 @@ func (h Handler) CreateItems(c *gin.Context) {
 	c.JSON(http.StatusOK, &ResponseSuccess{items})
 }
 
-func (h Handler) itemsFromInput(input []Item) ([]domain.Item, error) {
+func (h handler) itemsFromInput(input []Item) ([]domain.Item, error) {
 	itemsDB := make([]domain.Item, 0, len(input))
 	sellerMap := make(map[uuid.UUID]domain.Seller)
 

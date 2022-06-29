@@ -13,7 +13,7 @@ import (
 )
 
 type handlerCaseCreateSeller struct {
-	h      Handler
+	h      handler
 	in     string
 	status int
 }
@@ -53,7 +53,7 @@ func sellerCreateCaseFailDBInsertSeller(mc *gomock.Controller) handlerCaseCreate
 	ml.EXPECT().Error(gomock.Any())
 
 	return handlerCaseCreateSeller{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -68,7 +68,7 @@ func sellerCreateCaseFailEmptyPayload(mc *gomock.Controller) handlerCaseCreateSe
 	ml.EXPECT().Error(gomock.Any())
 
 	return handlerCaseCreateSeller{
-		h: Handler{
+		h: handler{
 			Log: ml,
 		},
 		in:     "{}",
@@ -82,7 +82,7 @@ func sellerCreateCaseFailJSON(mc *gomock.Controller) handlerCaseCreateSeller {
 	ml.EXPECT().Error(gomock.Any())
 
 	return handlerCaseCreateSeller{
-		h: Handler{
+		h: handler{
 			Log: ml,
 		},
 		in:     "{",
@@ -98,7 +98,7 @@ func sellerCreateCaseOK(mc *gomock.Controller) handlerCaseCreateSeller {
 	ml.EXPECT().Info(gomock.Any())
 
 	return handlerCaseCreateSeller{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},

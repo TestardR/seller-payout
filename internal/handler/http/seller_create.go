@@ -32,7 +32,7 @@ type Seller struct {
 // @Failure 400 {object} ResponseError
 // @Failure 500 {object} ResponseError
 // @Router /seller [post].
-func (h Handler) CreateSeller(c *gin.Context) {
+func (h handler) CreateSeller(c *gin.Context) {
 	var input Seller
 
 	outErr := func(status int, err error) {
