@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/TestardR/seller-payout/config"
-	"github.com/TestardR/seller-payout/internal/handler"
+	"github.com/TestardR/seller-payout/internal/handler/http"
 	"github.com/TestardR/seller-payout/pkg/currency"
 	"github.com/TestardR/seller-payout/pkg/db"
 	"github.com/TestardR/seller-payout/pkg/logger"
@@ -37,7 +37,7 @@ func main() {
 		log.Fatal("failed to run postgres migration: %w", err)
 	}
 
-	h := handler.Handler{
+	h := http.Handler{
 		Log: log,
 		DB:  db,
 		EX:  currency.New(),

@@ -1,4 +1,4 @@
-package handler
+package http
 
 // ResponseSuccess describes an generic API response for success.
 type ResponseSuccess struct {

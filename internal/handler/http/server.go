@@ -1,7 +1,6 @@
-package handler
+package http
 
 import (
-
 	// swagger docs.
 	_ "github.com/TestardR/seller-payout/docs"
 	"github.com/gin-gonic/gin"

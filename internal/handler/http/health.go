@@ -1,21 +1,11 @@
-package handler
+package http
 
 import (
 	"fmt"
 	"net/http"
 
-	"github.com/TestardR/seller-payout/pkg/currency"
-	"github.com/TestardR/seller-payout/pkg/db"
-	"github.com/TestardR/seller-payout/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
-
-// Handler is the main structure to inject dependencies.
-type Handler struct {
-	Log logger.Logger
-	DB  db.DB
-	EX  currency.Exchanger
-}
 
 // HealthResp holds the satus response from Health Check.
 type HealthResp struct {
