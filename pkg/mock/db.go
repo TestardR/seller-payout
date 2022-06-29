@@ -7,7 +7,7 @@ package mock
 import (
 	reflect "reflect"
 
-	model "github.com/TestardR/seller-payout/internal/model"
+	domain "github.com/TestardR/seller-payout/internal/domain"
 	db "github.com/TestardR/seller-payout/pkg/db"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -107,10 +107,10 @@ func (mr *MockDBMockRecorder) FindByID(dest, id interface{}) *gomock.Call {
 }
 
 // FindPayoutsBySellerID mocks base method.
-func (m *MockDB) FindPayoutsBySellerID(arg0 string) ([]model.Payout, error) {
+func (m *MockDB) FindPayoutsBySellerID(arg0 string) ([]domain.Payout, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindPayoutsBySellerID", arg0)
-	ret0, _ := ret[0].([]model.Payout)
+	ret0, _ := ret[0].([]domain.Payout)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -122,10 +122,10 @@ func (mr *MockDBMockRecorder) FindPayoutsBySellerID(arg0 interface{}) *gomock.Ca
 }
 
 // FindSellersWhereItems mocks base method.
-func (m *MockDB) FindSellersWhereItems(conds map[string]interface{}) ([]model.Seller, error) {
+func (m *MockDB) FindSellersWhereItems(conds map[string]interface{}) ([]domain.Seller, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindSellersWhereItems", conds)
-	ret0, _ := ret[0].([]model.Seller)
+	ret0, _ := ret[0].([]domain.Seller)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -137,10 +137,10 @@ func (mr *MockDBMockRecorder) FindSellersWhereItems(conds interface{}) *gomock.C
 }
 
 // FindUnpaidOutItems mocks base method.
-func (m *MockDB) FindUnpaidOutItems() ([]model.Item, error) {
+func (m *MockDB) FindUnpaidOutItems() ([]domain.Item, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindUnpaidOutItems")
-	ret0, _ := ret[0].([]model.Item)
+	ret0, _ := ret[0].([]domain.Item)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -152,10 +152,10 @@ func (mr *MockDBMockRecorder) FindUnpaidOutItems() *gomock.Call {
 }
 
 // FindUnpaidOutItemsBySellerID mocks base method.
-func (m *MockDB) FindUnpaidOutItemsBySellerID(arg0 string) ([]model.Item, error) {
+func (m *MockDB) FindUnpaidOutItemsBySellerID(arg0 string) ([]domain.Item, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindUnpaidOutItemsBySellerID", arg0)
-	ret0, _ := ret[0].([]model.Item)
+	ret0, _ := ret[0].([]domain.Item)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

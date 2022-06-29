@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/TestardR/seller-payout/internal/model"
+	"github.com/TestardR/seller-payout/internal/domain"
 	"github.com/TestardR/seller-payout/pkg/db"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
@@ -47,7 +47,7 @@ func (h Handler) ReadPayouts(c *gin.Context) {
 
 	sellerID := c.Param("seller_id")
 
-	var seller model.Seller
+	var seller domain.Seller
 
 	err := h.DB.FindByID(&seller, sellerID)
 	if errors.Is(err, db.ErrRecordNotFound) {
@@ -75,7 +75,7 @@ func (h Handler) ReadPayouts(c *gin.Context) {
 	c.JSON(http.StatusOK, &ResponseSuccess{p})
 }
 
-func newItemsFromInput(items []model.Item) []item {
+func newItemsFromInput(items []domain.Item) []item {
 	output := make([]item, 0, len(items))
 
 	for _, dbItem := range items {
@@ -89,7 +89,7 @@ func newItemsFromInput(items []model.Item) []item {
 	return output
 }
 
-func newPayoutsFromInput(dbPayouts []model.Payout) []payout {
+func newPayoutsFromInput(dbPayouts []domain.Payout) []payout {
 	output := make([]payout, 0, len(dbPayouts))
 
 	for _, DBpayout := range dbPayouts {

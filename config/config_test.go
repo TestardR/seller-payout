@@ -1,16 +1,16 @@
-package main
+package config
 
 import (
 	"errors"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gotest.tools/assert"
 )
 
 func TestConfig(t *testing.T) {
 	t.Run("should return an errParseEnv error", func(t *testing.T) {
-		_, err := config()
+		_, err := New()
 
 		assert.Equal(t, true, errors.Is(err, errParseEnv))
 	})
@@ -22,7 +22,7 @@ func TestConfig(t *testing.T) {
 		t.Setenv("CURRENCY_INTERVAL", "v")
 		t.Setenv("PG_HOST", "v")
 
-		_, err := config()
+		_, err := New()
 		assert.Equal(t, true, errors.Is(err, errParseEnv))
 	})
 
@@ -36,7 +36,7 @@ func TestConfig(t *testing.T) {
 		t.Setenv("PG_NAME", "postgres")
 		t.Setenv("PG_PASSWORD", "v")
 
-		_, err := config()
+		_, err := New()
 		require.NoError(t, err)
 	})
 }

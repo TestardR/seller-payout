@@ -4,25 +4,25 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/TestardR/seller-payout/internal/model"
+	"github.com/TestardR/seller-payout/internal/domain"
 )
 
 // FindUnpaidOutItemsBySellerID finds unpaid out itmes by seller_id.
-func (d database) FindUnpaidOutItemsBySellerID(id string) ([]model.Item, error) {
+func (d database) FindUnpaidOutItemsBySellerID(id string) ([]domain.Item, error) {
 	where := Conditions{"seller_id": id, "paid_out": false}
 
 	return d.items(where)
 }
 
 // FindUnpaidOutItems finds unpaid out itmes.
-func (d database) FindUnpaidOutItems() ([]model.Item, error) {
+func (d database) FindUnpaidOutItems() ([]domain.Item, error) {
 	where := Conditions{"paid_out": false}
 
 	return d.items(where)
 }
 
-func (d database) items(where Conditions) ([]model.Item, error) {
-	var items []model.Item
+func (d database) items(where Conditions) ([]domain.Item, error) {
+	var items []domain.Item
 
 	db, err := d.preloadItemsRelations()
 	if err != nil {

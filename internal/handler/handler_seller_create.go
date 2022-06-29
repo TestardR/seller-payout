@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/TestardR/seller-payout/internal/model"
+	"github.com/TestardR/seller-payout/internal/domain"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
 )
@@ -54,7 +54,7 @@ func (h Handler) CreateSeller(c *gin.Context) {
 		return
 	}
 
-	seller := model.Seller{
+	seller := domain.Seller{
 		CurrencyCode: input.Currency,
 	}
 

@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TestardR/seller-payout/internal/model"
+	"github.com/TestardR/seller-payout/internal/domain"
 	"github.com/TestardR/seller-payout/pkg/currency"
 	"github.com/TestardR/seller-payout/pkg/db"
 	"github.com/TestardR/seller-payout/pkg/mock"
@@ -66,7 +66,7 @@ func payoutsReadCaseOK(mc *gomock.Controller) handlerCaseReadPayouts {
 	mdb := mock.NewMockDB(mc)
 
 	mdb.EXPECT().FindByID(gomock.Any(), "123")
-	mdb.EXPECT().FindPayoutsBySellerID("123").Return([]model.Payout{}, nil)
+	mdb.EXPECT().FindPayoutsBySellerID("123").Return([]domain.Payout{}, nil)
 	ml.EXPECT().Info(gomock.Any())
 
 	return handlerCaseReadPayouts{
@@ -84,7 +84,7 @@ func payoutsReadCaseFailDBFindPayouts(mc *gomock.Controller) handlerCaseReadPayo
 	mdb := mock.NewMockDB(mc)
 
 	mdb.EXPECT().FindByID(gomock.Any(), "123")
-	mdb.EXPECT().FindPayoutsBySellerID("123").Return([]model.Payout{}, errors.New("mock"))
+	mdb.EXPECT().FindPayoutsBySellerID("123").Return([]domain.Payout{}, errors.New("mock"))
 	ml.EXPECT().Error(gomock.Any())
 
 	return handlerCaseReadPayouts{
@@ -133,12 +133,12 @@ func payoutsReadCaseFailDBFindSellerByID(mc *gomock.Controller) handlerCaseReadP
 
 func Test_NewPayoutsFromInput(t *testing.T) {
 
-	expected := []model.Payout{
+	expected := []domain.Payout{
 		{ID: uuid.FromStringOrNil("test"),
 			PriceTotal: decimal.NewFromInt(1),
 			CreatedAt:  time.Date(0, 0, 0, 0, 0, 0, 0, time.UTC),
-			Currency:   model.Currency{Code: currency.EURCode},
-			Items: []model.Item{
+			Currency:   domain.Currency{Code: currency.EURCode},
+			Items: []domain.Item{
 				{
 					ID:            uuid.FromStringOrNil("test"),
 					ReferenceName: "test",

@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/TestardR/seller-payout/internal/model"
+	"github.com/TestardR/seller-payout/internal/domain"
 	"github.com/golang-migrate/migrate/v4"
 	migrate_pg "github.com/golang-migrate/migrate/v4/database/postgres"
 
@@ -50,10 +50,10 @@ type DB interface {
 	FindAll(dest interface{}) error
 	FindAllWhere(dest interface{}, conds map[string]interface{}) error
 
-	FindPayoutsBySellerID(string) ([]model.Payout, error)
-	FindUnpaidOutItemsBySellerID(string) ([]model.Item, error)
-	FindUnpaidOutItems() ([]model.Item, error)
-	FindSellersWhereItems(conds map[string]interface{}) ([]model.Seller, error)
+	FindPayoutsBySellerID(string) ([]domain.Payout, error)
+	FindUnpaidOutItemsBySellerID(string) ([]domain.Item, error)
+	FindUnpaidOutItems() ([]domain.Item, error)
+	FindSellersWhereItems(conds map[string]interface{}) ([]domain.Seller, error)
 
 	RunMigrations(path string) error
 }

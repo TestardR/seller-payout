@@ -4,12 +4,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/TestardR/seller-payout/internal/model"
+	"github.com/TestardR/seller-payout/internal/domain"
 )
 
 // FindAllSellerWithUnpaidoutItems finds all sellers with unpaid out items.
-func (d database) FindSellersWhereItems(where map[string]interface{}) ([]model.Seller, error) {
-	var s []model.Seller
+func (d database) FindSellersWhereItems(where map[string]interface{}) ([]domain.Seller, error) {
+	var s []domain.Seller
 
 	db, err := d.preloadSellersRelations(where)
 	if err != nil {

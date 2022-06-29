@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/TestardR/seller-payout/internal/model"
+	"github.com/TestardR/seller-payout/internal/domain"
 	"github.com/TestardR/seller-payout/pkg/currency"
 	"github.com/shopspring/decimal"
 )
@@ -25,7 +25,7 @@ func (h Handler) CreatePayouts() error {
 		return err
 	}
 
-	var currencies []model.Currency
+	var currencies []domain.Currency
 	if err := h.DB.FindAll(&currencies); err != nil {
 		err = fmt.Errorf("%w: %s", errDB, err)
 		h.Log.Error(err)
@@ -33,7 +33,7 @@ func (h Handler) CreatePayouts() error {
 		return err
 	}
 
-	currenciesMap := make(map[string]model.Currency)
+	currenciesMap := make(map[string]domain.Currency)
 	for _, c := range currencies {
 		currenciesMap[c.Code] = c
 	}
@@ -56,7 +56,7 @@ func (h Handler) CreatePayouts() error {
 }
 
 // setupPipeline organizes stages for staged processing.
-func (h Handler) setupPipeline(seller model.Seller, currenciesMap map[string]model.Currency) error {
+func (h Handler) setupPipeline(seller domain.Seller, currenciesMap map[string]domain.Currency) error {
 	// if an error occurs the done channel will gracefully terminate stages 1. and 2.
 	done := make(chan struct{})
 	defer close(done)
@@ -76,20 +76,20 @@ func (h Handler) setupPipeline(seller model.Seller, currenciesMap map[string]mod
 }
 
 type itemsBatch struct {
-	items      []model.Item
+	items      []domain.Item
 	totalPrice decimal.Decimal
 }
 
 func generateItemsBatch(
 	done <-chan struct{},
-	seller model.Seller,
-	currencies map[string]model.Currency) <-chan itemsBatch {
+	seller domain.Seller,
+	currencies map[string]domain.Currency) <-chan itemsBatch {
 	itemsBatchC := make(chan itemsBatch)
 
 	go func() {
 		defer close(itemsBatchC)
 
-		var batch []model.Item
+		var batch []domain.Item
 
 		totalPrice := decimal.NewFromInt(0)
 
@@ -131,17 +131,17 @@ func generateItemsBatch(
 
 func generatePayouts(
 	done <-chan struct{},
-	seller model.Seller,
-	currencies map[string]model.Currency,
-	itemsBatchC <-chan itemsBatch) <-chan model.Payout {
-	payoutC := make(chan model.Payout)
+	seller domain.Seller,
+	currencies map[string]domain.Currency,
+	itemsBatchC <-chan itemsBatch) <-chan domain.Payout {
+	payoutC := make(chan domain.Payout)
 	sellerCurrency := seller.CurrencyCode
 
 	go func() {
 		defer close(payoutC)
 
 		for batch := range itemsBatchC {
-			p := model.Payout{
+			p := domain.Payout{
 				PriceTotal: batch.totalPrice.Round(numberOfDecimals),
 				Items:      batch.items,
 				SellerID:   seller.ID,
@@ -160,8 +160,8 @@ func generatePayouts(
 	return payoutC
 }
 
-func (h Handler) persistPayouts(payoutC <-chan model.Payout) error {
-	runTransaction := func(payout model.Payout) error {
+func (h Handler) persistPayouts(payoutC <-chan domain.Payout) error {
+	runTransaction := func(payout domain.Payout) error {
 		tx, err := h.DB.Begin()
 		if err != nil {
 			err = fmt.Errorf("failed to create DB transaction: %w", err)
@@ -210,7 +210,7 @@ func (h Handler) persistPayouts(payoutC <-chan model.Payout) error {
 
 func convertToSellerCurrency(
 	sellerCode, itemCode string,
-	currencies map[string]model.Currency,
+	currencies map[string]domain.Currency,
 	price decimal.Decimal) decimal.Decimal {
 	if itemCode == sellerCode {
 		return price

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/TestardR/seller-payout/internal/model"
+	"github.com/TestardR/seller-payout/internal/domain"
 	"github.com/TestardR/seller-payout/pkg/currency"
 	"github.com/TestardR/seller-payout/pkg/db"
 	"github.com/gin-gonic/gin"
@@ -92,35 +92,35 @@ func (h Handler) CreateItems(c *gin.Context) {
 	c.JSON(http.StatusOK, &ResponseSuccess{items})
 }
 
-func (h Handler) itemsFromInput(input []Item) ([]model.Item, error) {
-	itemsDB := make([]model.Item, 0, len(input))
-	sellerMap := make(map[uuid.UUID]model.Seller)
+func (h Handler) itemsFromInput(input []Item) ([]domain.Item, error) {
+	itemsDB := make([]domain.Item, 0, len(input))
+	sellerMap := make(map[uuid.UUID]domain.Seller)
 
 	// Note: if seller does not exist, we auto-create sellers with USD as currency for development sake
 	// Not a good practice, in production, would get sellers through API or DB and discard unknown sellers.
-	retrieveOrCreateSeller := func(item Item, sellerMap map[uuid.UUID]model.Seller) (model.Seller, error) {
+	retrieveOrCreateSeller := func(item Item, sellerMap map[uuid.UUID]domain.Seller) (domain.Seller, error) {
 		// cache seller to avoid unnecessary call.
 		if s, ok := sellerMap[item.SellerID]; ok {
 			return s, nil
 		}
 
-		var seller model.Seller
+		var seller domain.Seller
 
 		err := h.DB.FindByID(&seller, item.SellerID.String())
 		if errors.Is(err, db.ErrRecordNotFound) {
-			s := model.Seller{ID: item.SellerID, CurrencyCode: currency.USDCode}
+			s := domain.Seller{ID: item.SellerID, CurrencyCode: currency.USDCode}
 			sellerMap[item.SellerID] = s
 
 			err := h.DB.Insert(&s)
 			if err != nil {
-				return model.Seller{}, fmt.Errorf("%w: %s", errDB, err)
+				return domain.Seller{}, fmt.Errorf("%w: %s", errDB, err)
 			}
 
 			return sellerMap[item.SellerID], nil
 		}
 
 		if err != nil {
-			return model.Seller{}, fmt.Errorf("%w: %s", errDB, err)
+			return domain.Seller{}, fmt.Errorf("%w: %s", errDB, err)
 		}
 
 		sellerMap[item.SellerID] = seller
@@ -134,7 +134,7 @@ func (h Handler) itemsFromInput(input []Item) ([]model.Item, error) {
 			return nil, err
 		}
 
-		itemDB := model.Item{
+		itemDB := domain.Item{
 			ReferenceName: item.Name,
 			Seller:        seller,
 			SellerID:      item.SellerID,

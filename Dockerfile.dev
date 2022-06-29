@@ -1,4 +1,4 @@
-FROM golang:1.17 as deps
+FROM golang:1.18 as deps
 
 WORKDIR /go/src
 

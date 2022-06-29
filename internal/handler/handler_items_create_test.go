@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/TestardR/seller-payout/internal/model"
+	"github.com/TestardR/seller-payout/internal/domain"
 	"github.com/TestardR/seller-payout/pkg/db"
 	"github.com/TestardR/seller-payout/pkg/mock"
 	"github.com/gin-gonic/gin"
@@ -107,7 +107,7 @@ func itemsCreateCaseFailDBFindSellerByID(mc *gomock.Controller) handlerCaseCreat
 	ml := mock.NewMockLogger(mc)
 	mdb := mock.NewMockDB(mc)
 
-	mdb.EXPECT().FindByID(&model.Seller{}, "78dd7916-f276-494b-84a8-83e5bbee8c11").Return(errors.New("mock"))
+	mdb.EXPECT().FindByID(&domain.Seller{}, "78dd7916-f276-494b-84a8-83e5bbee8c11").Return(errors.New("mock"))
 	ml.EXPECT().Error(gomock.Any())
 
 	return handlerCaseCreateItems{
@@ -126,7 +126,7 @@ func itemsCreateCaseFailDBInsertItems(mc *gomock.Controller) handlerCaseCreateIt
 
 	mSellerID := "78dd7916-f276-494b-84a8-83e5bbee8c11"
 
-	mdb.EXPECT().FindByID(&model.Seller{}, mSellerID)
+	mdb.EXPECT().FindByID(&domain.Seller{}, mSellerID)
 	mdb.EXPECT().Insert(gomock.Any()).Return(errors.New("mock"))
 	ml.EXPECT().Error(gomock.Any())
 
@@ -146,7 +146,7 @@ func itemsCreateCaseAutoCreateSeller(mc *gomock.Controller) handlerCaseCreateIte
 
 	mSellerID := "78dd7916-f276-494b-84a8-83e5bbee8c11"
 
-	mdb.EXPECT().FindByID(&model.Seller{}, mSellerID).Return(db.ErrRecordNotFound)
+	mdb.EXPECT().FindByID(&domain.Seller{}, mSellerID).Return(db.ErrRecordNotFound)
 	mdb.EXPECT().Insert(gomock.Any())
 	mdb.EXPECT().Insert(gomock.Any())
 	ml.EXPECT().Info(gomock.Any())
@@ -167,7 +167,7 @@ func itemsCreateCaseOK(mc *gomock.Controller) handlerCaseCreateItems {
 
 	mSellerID := "78dd7916-f276-494b-84a8-83e5bbee8c11"
 
-	mdb.EXPECT().FindByID(&model.Seller{}, mSellerID)
+	mdb.EXPECT().FindByID(&domain.Seller{}, mSellerID)
 	mdb.EXPECT().Insert(gomock.Any())
 	ml.EXPECT().Info(gomock.Any())
 

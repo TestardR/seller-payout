@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/TestardR/seller-payout/internal/model"
+	"github.com/TestardR/seller-payout/internal/domain"
 	"github.com/TestardR/seller-payout/pkg/mock"
 	"github.com/gofrs/uuid"
 	"github.com/golang/mock/gomock"
@@ -169,7 +169,7 @@ func payoutsCreateCaseFailDBFindUnpaidOutItems(mc *gomock.Controller) handleCase
 	merr := errors.New("mock")
 
 	ml.EXPECT().Info(gomock.Any())
-	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return([]model.Seller{}, merr)
+	mdb.EXPECT().FindSellersWhereItems(map[string]interface{}{"paid_out": false}).Return([]domain.Seller{}, merr)
 	ml.EXPECT().Error(gomock.Any())
 
 	return handleCaseCreatePayouts{
@@ -251,12 +251,12 @@ func payoutsCreateCaseOK(mc *gomock.Controller) handleCaseCreatePayouts {
 }
 
 func Test_convertToSellerCurrency(t *testing.T) {
-	currencies := make(map[string]model.Currency)
+	currencies := make(map[string]domain.Currency)
 
-	currencies["USD"] = model.Currency{
+	currencies["USD"] = domain.Currency{
 		USDExchRate: decimal.NewFromInt(1),
 	}
-	currencies["EUR"] = model.Currency{
+	currencies["EUR"] = domain.Currency{
 		USDExchRate: decimal.NewFromInt(1),
 	}
 
@@ -267,48 +267,48 @@ func Test_convertToSellerCurrency(t *testing.T) {
 	assert.True(t, got.Equal(decimal.NewFromInt(1)))
 }
 
-func validItems(paidout bool) []model.Item {
-	return []model.Item{validItem(paidout)}
+func validItems(paidout bool) []domain.Item {
+	return []domain.Item{validItem(paidout)}
 }
 
-func validItemsAboveMaxPrice(paidout bool) []model.Item {
-	return []model.Item{validItem(paidout), validItem(paidout)}
+func validItemsAboveMaxPrice(paidout bool) []domain.Item {
+	return []domain.Item{validItem(paidout), validItem(paidout)}
 }
 
-func validItem(paidout bool) model.Item {
+func validItem(paidout bool) domain.Item {
 	mID := uuid.FromStringOrNil("test-id")
-	return model.Item{
+	return domain.Item{
 		ReferenceName: "test-ref-name",
 		SellerID:      mID,
-		Seller:        model.Seller{ID: mID, CurrencyCode: "USD"},
+		Seller:        domain.Seller{ID: mID, CurrencyCode: "USD"},
 		PaidOut:       paidout,
 		PriceAmount:   decimal.NewFromInt(1000000),
 		CurrencyCode:  "USD",
 	}
 }
 
-func sellersWithUnpaidOutItems() []model.Seller {
-	mSeller := model.Seller{
+func sellersWithUnpaidOutItems() []domain.Seller {
+	mSeller := domain.Seller{
 		CurrencyCode: "USD",
 		Items:        validItems(false),
 	}
 
-	return []model.Seller{mSeller}
+	return []domain.Seller{mSeller}
 }
 
-func sellersWithUnpaidOutItemsAboveMaxPrice() []model.Seller {
-	return []model.Seller{
+func sellersWithUnpaidOutItemsAboveMaxPrice() []domain.Seller {
+	return []domain.Seller{
 		{
 			CurrencyCode: "USD",
 			Items:        validItemsAboveMaxPrice(false)},
 	}
 }
 
-func sellersWithoutUnpaidOutitems() []model.Seller {
-	mSeller := model.Seller{
+func sellersWithoutUnpaidOutitems() []domain.Seller {
+	mSeller := domain.Seller{
 		CurrencyCode: "USD",
-		Items:        []model.Item{},
+		Items:        []domain.Item{},
 	}
 
-	return []model.Seller{mSeller}
+	return []domain.Seller{mSeller}
 }

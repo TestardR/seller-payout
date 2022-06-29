@@ -4,21 +4,21 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/TestardR/seller-payout/internal/model"
+	"github.com/TestardR/seller-payout/internal/domain"
 )
 
 // Conditions helper used for Storager queries (see gorm.Where).
 type Conditions map[string]interface{}
 
 // FindPayoutsBySellerID finds payouts by seller_id.
-func (d database) FindPayoutsBySellerID(id string) ([]model.Payout, error) {
+func (d database) FindPayoutsBySellerID(id string) ([]domain.Payout, error) {
 	where := Conditions{"seller_id": id}
 
 	return d.payouts(where)
 }
 
-func (d database) payouts(where Conditions) ([]model.Payout, error) {
-	var p []model.Payout
+func (d database) payouts(where Conditions) ([]domain.Payout, error) {
+	var p []domain.Payout
 
 	db, err := d.preloadPayoutsRelations()
 	if err != nil {

@@ -3,7 +3,7 @@ package handler
 import (
 	"fmt"
 
-	"github.com/TestardR/seller-payout/internal/model"
+	"github.com/TestardR/seller-payout/internal/domain"
 )
 
 // UpdateCurrencies is a background task,
@@ -11,7 +11,7 @@ import (
 func (h Handler) UpdateCurrencies() error {
 	h.Log.Info("currencies update started")
 
-	var currencies []model.Currency
+	var currencies []domain.Currency
 
 	if err := h.DB.FindAll(&currencies); err != nil {
 		err = fmt.Errorf("%w: %s", errDB, err)
