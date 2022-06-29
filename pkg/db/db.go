@@ -24,6 +24,8 @@ var (
 	ErrAbsolutePath = errors.New("path should not be absolute")
 	// ErrConnPool is failed to cast ConnPool to pingable interface.
 	ErrConnPool = errors.New("failed to cast ConnPool to pingable interface")
+	// ErrDB is failed to perform database operation.
+	ErrDB = errors.New("failed to perform database operation")
 )
 
 //go:generate mockgen -source=db.go -destination=$MOCK_FOLDER/db.go -package=mock

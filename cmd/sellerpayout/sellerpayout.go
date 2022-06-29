@@ -1,9 +1,8 @@
 package main
 
 import (
-	"time"
-
 	"github.com/TestardR/seller-payout/config"
+	"github.com/TestardR/seller-payout/internal/handler/cron"
 	"github.com/TestardR/seller-payout/internal/handler/http"
 	"github.com/TestardR/seller-payout/pkg/currency"
 	"github.com/TestardR/seller-payout/pkg/db"
@@ -37,31 +36,9 @@ func main() {
 		log.Fatal("failed to run postgres migration: %w", err)
 	}
 
-	h := http.Handler{
-		Log: log,
-		DB:  db,
-		EX:  currency.New(),
-	}
+	cron.Run(log, db, currency.New(), c.CronIntervals)
 
-	payoutTicker := time.NewTicker(time.Duration(c.PayoutInterval) * time.Hour)
-	currencyTicker := time.NewTicker(time.Duration(c.CurrencyInterval) * time.Hour)
-
-	go func() {
-		for {
-			select {
-			case <-payoutTicker.C:
-				if err := h.CreatePayouts(); err != nil {
-					log.Fatal("failed to create payouts: %w", err)
-				}
-			case <-currencyTicker.C:
-				if err := h.UpdateCurrencies(); err != nil {
-					log.Fatal("failed to update currencies: %w", err)
-				}
-			}
-		}
-	}()
-
-	server := h.NewServer(c.Env)
+	server := http.NewServer(c.Env, log, db)
 
 	err = server.Run(":" + c.Port)
 	if err != nil {

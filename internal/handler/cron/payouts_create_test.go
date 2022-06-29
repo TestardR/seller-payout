@@ -1,4 +1,4 @@
-package http
+package cron
 
 import (
 	"errors"
@@ -13,7 +13,7 @@ import (
 )
 
 type handleCaseCreatePayouts struct {
-	h   Handler
+	h   handler
 	err error
 }
 
@@ -37,7 +37,7 @@ func TestHandler_CreatePayouts(t *testing.T) {
 	for tn, tc := range tests {
 		tn, tc := tn, tc
 		t.Run(tn, func(t *testing.T) {
-			/* t.Parallel() */
+			t.Parallel()
 
 			err := tc.h.CreatePayouts()
 
@@ -65,7 +65,7 @@ func payoutsCreateCaseFailDBCommitTX(mc *gomock.Controller) handleCaseCreatePayo
 	ml.EXPECT().Error(gomock.Any())
 
 	return handleCaseCreatePayouts{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -89,7 +89,7 @@ func payoutsCreateCaseFailDBUpdateTX(mc *gomock.Controller) handleCaseCreatePayo
 	ml.EXPECT().Error(gomock.Any())
 
 	return handleCaseCreatePayouts{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -112,7 +112,7 @@ func payoutsCreateCaseFailDBInsertTX(mc *gomock.Controller) handleCaseCreatePayo
 	ml.EXPECT().Error(gomock.Any())
 
 	return handleCaseCreatePayouts{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -134,7 +134,7 @@ func payoutsCreateCaseFailDBBeginTX(mc *gomock.Controller) handleCaseCreatePayou
 	ml.EXPECT().Error(gomock.Any())
 
 	return handleCaseCreatePayouts{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -154,7 +154,7 @@ func payoutsCreateCaseFailDBFindCurrencies(mc *gomock.Controller) handleCaseCrea
 	ml.EXPECT().Error(gomock.Any())
 
 	return handleCaseCreatePayouts{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -173,7 +173,7 @@ func payoutsCreateCaseFailDBFindUnpaidOutItems(mc *gomock.Controller) handleCase
 	ml.EXPECT().Error(gomock.Any())
 
 	return handleCaseCreatePayouts{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -201,7 +201,7 @@ func payoutsCreateCaseSplitPayoutsAboveMaxPrice(mc *gomock.Controller) handleCas
 	ml.EXPECT().Info(gomock.Any())
 
 	return handleCaseCreatePayouts{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -219,7 +219,7 @@ func payoutsCreateCaseNoPayoutCreatedWithoutItems(mc *gomock.Controller) handleC
 	ml.EXPECT().Info(gomock.Any())
 
 	return handleCaseCreatePayouts{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},
@@ -242,7 +242,7 @@ func payoutsCreateCaseOK(mc *gomock.Controller) handleCaseCreatePayouts {
 	ml.EXPECT().Info(gomock.Any())
 
 	return handleCaseCreatePayouts{
-		h: Handler{
+		h: handler{
 			Log: ml,
 			DB:  mdb,
 		},

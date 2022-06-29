@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/TestardR/seller-payout/internal/domain"
+	"github.com/TestardR/seller-payout/pkg/db"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
 )
@@ -13,7 +14,6 @@ import (
 var (
 	errBindJSON        = errors.New("failed to decode JSON payload")
 	errValidatePayload = errors.New("failed to validate payload")
-	errDB              = errors.New("failed to perform database operation")
 )
 
 // Seller is the item owner with a desired currency for payouts.
@@ -59,7 +59,7 @@ func (h Handler) CreateSeller(c *gin.Context) {
 	}
 
 	if err := h.DB.Insert(&seller); err != nil {
-		outErr(http.StatusInternalServerError, fmt.Errorf("%w: %s", errDB, err))
+		outErr(http.StatusInternalServerError, fmt.Errorf("%w: %s", db.ErrDB, err))
 
 		return
 	}

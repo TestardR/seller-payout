@@ -1,4 +1,4 @@
-package http
+package cron
 
 import (
 	"errors"
@@ -6,6 +6,7 @@ import (
 
 	"github.com/TestardR/seller-payout/internal/domain"
 	"github.com/TestardR/seller-payout/pkg/currency"
+	"github.com/TestardR/seller-payout/pkg/db"
 	"github.com/shopspring/decimal"
 )
 
@@ -14,12 +15,12 @@ var errRecoverFromPanic = errors.New("panic defer handler")
 const totalPriceLimit = 1_000_000
 
 // CreatePayouts is a background task which goal is to create payouts.
-func (h Handler) CreatePayouts() error {
+func (h handler) CreatePayouts() error {
 	h.Log.Info("payouts creation started")
 
 	sellers, err := h.DB.FindSellersWhereItems(map[string]interface{}{"paid_out": false})
 	if err != nil {
-		err = fmt.Errorf("%w: %s", errDB, err)
+		err = fmt.Errorf("%w: %s", db.ErrDB, err)
 		h.Log.Error(err)
 
 		return err
@@ -27,7 +28,7 @@ func (h Handler) CreatePayouts() error {
 
 	var currencies []domain.Currency
 	if err := h.DB.FindAll(&currencies); err != nil {
-		err = fmt.Errorf("%w: %s", errDB, err)
+		err = fmt.Errorf("%w: %s", db.ErrDB, err)
 		h.Log.Error(err)
 
 		return err
@@ -56,7 +57,7 @@ func (h Handler) CreatePayouts() error {
 }
 
 // setupPipeline organizes stages for staged processing.
-func (h Handler) setupPipeline(seller domain.Seller, currenciesMap map[string]domain.Currency) error {
+func (h handler) setupPipeline(seller domain.Seller, currenciesMap map[string]domain.Currency) error {
 	// if an error occurs the done channel will gracefully terminate stages 1. and 2.
 	done := make(chan struct{})
 	defer close(done)
@@ -142,7 +143,7 @@ func generatePayouts(
 
 		for batch := range itemsBatchC {
 			p := domain.Payout{
-				PriceTotal: batch.totalPrice.Round(numberOfDecimals),
+				PriceTotal: batch.totalPrice.Round(domain.PriceDecimals),
 				Items:      batch.items,
 				SellerID:   seller.ID,
 				Seller:     seller,
@@ -160,7 +161,7 @@ func generatePayouts(
 	return payoutC
 }
 
-func (h Handler) persistPayouts(payoutC <-chan domain.Payout) error {
+func (h handler) persistPayouts(payoutC <-chan domain.Payout) error {
 	runTransaction := func(payout domain.Payout) error {
 		tx, err := h.DB.Begin()
 		if err != nil {
@@ -178,7 +179,7 @@ func (h Handler) persistPayouts(payoutC <-chan domain.Payout) error {
 		}()
 
 		if err := tx.Insert(&payout); err != nil {
-			return fmt.Errorf("%w: %s", errDB, err)
+			return fmt.Errorf("%w: %s", db.ErrDB, err)
 		}
 
 		for i := 0; i < len(payout.Items); i++ {
@@ -186,7 +187,7 @@ func (h Handler) persistPayouts(payoutC <-chan domain.Payout) error {
 		}
 
 		if err := tx.Update(payout.Items); err != nil {
-			return fmt.Errorf("%w: %s", errDB, err)
+			return fmt.Errorf("%w: %s", db.ErrDB, err)
 		}
 
 		if err = tx.Commit(); err != nil {

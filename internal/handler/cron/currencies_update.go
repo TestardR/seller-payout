@@ -1,20 +1,21 @@
-package http
+package cron
 
 import (
 	"fmt"
 
 	"github.com/TestardR/seller-payout/internal/domain"
+	"github.com/TestardR/seller-payout/pkg/db"
 )
 
 // UpdateCurrencies is a background task,
 // it calls an external API to update currencies exchange rate.
-func (h Handler) UpdateCurrencies() error {
+func (h handler) UpdateCurrencies() error {
 	h.Log.Info("currencies update started")
 
 	var currencies []domain.Currency
 
 	if err := h.DB.FindAll(&currencies); err != nil {
-		err = fmt.Errorf("%w: %s", errDB, err)
+		err = fmt.Errorf("%w: %s", db.ErrDB, err)
 		h.Log.Error(err)
 
 		return err
@@ -32,7 +33,7 @@ func (h Handler) UpdateCurrencies() error {
 	}
 
 	if err := h.DB.Update(currencies); err != nil {
-		err = fmt.Errorf("%w: %s", errDB, err)
+		err = fmt.Errorf("%w: %s", db.ErrDB, err)
 		h.Log.Error(err)
 
 		return err

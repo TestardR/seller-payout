@@ -7,6 +7,9 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+// PriceDecimals represents the number of decimal for a price.
+const PriceDecimals int32 = 3
+
 // Item is a sold product.
 type Item struct {
 	ID        uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"-"`

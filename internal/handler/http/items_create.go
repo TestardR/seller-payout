@@ -15,8 +15,7 @@ import (
 )
 
 const (
-	successMessage   = "success"
-	numberOfDecimals = 3
+	successMessage = "success"
 )
 
 var errMissingPayload = errors.New("there should be at least one item")
@@ -83,7 +82,7 @@ func (h Handler) CreateItems(c *gin.Context) {
 	}
 
 	if err := h.DB.Insert(&items); err != nil {
-		outErr(http.StatusInternalServerError, fmt.Errorf("%w: %s", errDB, err))
+		outErr(http.StatusInternalServerError, fmt.Errorf("%w: %s", db.ErrDB, err))
 
 		return
 	}
@@ -113,14 +112,14 @@ func (h Handler) itemsFromInput(input []Item) ([]domain.Item, error) {
 
 			err := h.DB.Insert(&s)
 			if err != nil {
-				return domain.Seller{}, fmt.Errorf("%w: %s", errDB, err)
+				return domain.Seller{}, fmt.Errorf("%w: %s", db.ErrDB, err)
 			}
 
 			return sellerMap[item.SellerID], nil
 		}
 
 		if err != nil {
-			return domain.Seller{}, fmt.Errorf("%w: %s", errDB, err)
+			return domain.Seller{}, fmt.Errorf("%w: %s", db.ErrDB, err)
 		}
 
 		sellerMap[item.SellerID] = seller
@@ -139,7 +138,7 @@ func (h Handler) itemsFromInput(input []Item) ([]domain.Item, error) {
 			Seller:        seller,
 			SellerID:      item.SellerID,
 			CurrencyCode:  item.Currency,
-			PriceAmount:   decimal.NewFromInt(item.Amount).Round(numberOfDecimals),
+			PriceAmount:   decimal.NewFromInt(item.Amount).Round(domain.PriceDecimals),
 		}
 
 		itemsDB = append(itemsDB, itemDB)

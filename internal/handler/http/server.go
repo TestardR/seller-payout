@@ -2,7 +2,10 @@ package http
 
 import (
 	// swagger docs.
+
 	_ "github.com/TestardR/seller-payout/docs"
+	"github.com/TestardR/seller-payout/pkg/db"
+	"github.com/TestardR/seller-payout/pkg/logger"
 	"github.com/gin-gonic/gin"
 
 	// swagger embed files.
@@ -29,7 +32,12 @@ const (
 // @host localhost:3000
 
 // NewServer instantiates an HTTP server.
-func (h Handler) NewServer(env string) *gin.Engine {
+func NewServer(env string, log logger.Logger, db db.DB) *gin.Engine {
+	h := Handler{
+		Log: log,
+		DB:  db,
+	}
+
 	gin.SetMode(env)
 
 	router := gin.New()

@@ -1,9 +1,10 @@
-package http
+package cron
 
 import (
 	"errors"
 	"testing"
 
+	"github.com/TestardR/seller-payout/pkg/db"
 	"github.com/TestardR/seller-payout/pkg/mock"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,7 @@ func TestHandler_UpdateCurrencies(t *testing.T) {
 	mDB := mock.NewMockDB(ctrl)
 	mEX := mock.NewMockExchanger(ctrl)
 
-	h := Handler{
+	h := handler{
 		Log: mLog,
 		DB:  mDB,
 		EX:  mEX,
@@ -40,7 +41,7 @@ func TestHandler_UpdateCurrencies(t *testing.T) {
 		mLog.EXPECT().Error(gomock.Any())
 
 		err := h.UpdateCurrencies()
-		assert.ErrorIs(t, err, errDB)
+		assert.ErrorIs(t, err, db.ErrDB)
 	})
 
 	t.Run("should_return_an_error_if_db_update_fails", func(t *testing.T) {
@@ -50,6 +51,6 @@ func TestHandler_UpdateCurrencies(t *testing.T) {
 		mLog.EXPECT().Error(gomock.Any())
 
 		err := h.UpdateCurrencies()
-		assert.ErrorIs(t, err, errDB)
+		assert.ErrorIs(t, err, db.ErrDB)
 	})
 }

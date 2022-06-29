@@ -51,20 +51,20 @@ func (h Handler) ReadPayouts(c *gin.Context) {
 
 	err := h.DB.FindByID(&seller, sellerID)
 	if errors.Is(err, db.ErrRecordNotFound) {
-		outErr(http.StatusBadRequest, fmt.Errorf("%w: %s", errDB, err))
+		outErr(http.StatusBadRequest, fmt.Errorf("%w: %s", db.ErrDB, err))
 
 		return
 	}
 
 	if err != nil {
-		outErr(http.StatusInternalServerError, fmt.Errorf("%w: %s", errDB, err))
+		outErr(http.StatusInternalServerError, fmt.Errorf("%w: %s", db.ErrDB, err))
 
 		return
 	}
 
 	payouts, err := h.DB.FindPayoutsBySellerID(sellerID)
 	if err != nil {
-		outErr(http.StatusInternalServerError, fmt.Errorf("%w: %s", errDB, err))
+		outErr(http.StatusInternalServerError, fmt.Errorf("%w: %s", db.ErrDB, err))
 
 		return
 	}

@@ -37,8 +37,7 @@ func TestHandler_CreateItems(t *testing.T) {
 	for tn, tc := range tests {
 		tn, tc := tn, tc
 		t.Run(tn, func(t *testing.T) {
-
-			router := tc.h.NewServer(gin.TestMode)
+			router := NewServer(gin.TestMode, tc.h.Log, tc.h.DB)
 			w := httptest.NewRecorder()
 
 			req, _ := http.NewRequest(http.MethodPost, createItemsRoute, bytes.NewBuffer([]byte(tc.in)))
